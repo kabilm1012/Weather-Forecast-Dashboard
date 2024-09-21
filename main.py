@@ -12,23 +12,28 @@ data = st.selectbox(label="Select data to visualize",
 st.subheader(f"{data} for the next {days} days in {place.title()}")
 
 if place:
-    # Get temperature/sky data
-    filtered_data = get_data(place, days)
+    try:
+        # Get temperature/sky data
+        filtered_data = get_data(place, days)
 
-    if data == "Temperature":
-        temperature = [dict['main']['temp']/10 for dict in filtered_data]
-        dates = [dict['dt_txt'] for dict in filtered_data]
-        # Plot the temperature data
-        figure = px.line(x=dates, y=temperature, 
-                        labels={"x": "Dates", "y": "Temperature (C)"})
-        st.plotly_chart(figure_or_data=figure)
-    elif data == "Sky": 
-        sky_conditions = [dict['weather'][0]['main'] for dict in filtered_data]
-        images = {"Clear": "images/clear.png", "Clouds": "images/cloud.png",
-                  "Rain": "images/rain.png", "Snow": "images/snow.png"}
-        image_paths = [images[condition] for condition in sky_conditions]
-        # Render the images
-        st.image(image=image_paths, caption=sky_conditions, width=115)
+        if data == "Temperature":
+            temperature = [dict['main']['temp']/10 for dict in filtered_data]
+            dates = [dict['dt_txt'] for dict in filtered_data]
+            # Plot the temperature data
+            figure = px.line(x=dates, y=temperature, 
+                            labels={"x": "Dates", "y": "Temperature (C)"})
+            st.plotly_chart(figure_or_data=figure)
+        elif data == "Sky": 
+            sky_conditions = [dict['weather'][0]['main'] for dict in filtered_data]
+            images = {"Clear": "images/clear.png", "Clouds": "images/cloud.png",
+                    "Rain": "images/rain.png", "Snow": "images/snow.png"}
+            image_paths = [images[condition] for condition in sky_conditions]
+            # Render the images
+            st.image(image=image_paths, caption=sky_conditions, width=115)
+    except KeyError:
+        st.write("Oh! You entered a wrong city name")
+
+
 
 
 
